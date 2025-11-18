@@ -1,0 +1,267 @@
+/* Clinic register layout (moved from App.css) */
+.clinic-register-page {
+  min-height: 100vh;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #111827;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.clinic-register-page[dir='rtl'] .clinic-register-shell {
+  text-align: right;
+}
+
+.clinic-register-shell {
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.cr-lang-switch {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cr-lang-btn {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #111827;
+}
+
+.cr-lang-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.cr-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cr-header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 1.25rem;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #ffffff;
+  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.6);
+}
+
+.cr-header-text h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.cr-header-text p {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+.cr-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.cr-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+  padding: 1.75rem 2rem 1.9rem;
+}
+
+.cr-card-header {
+  margin-bottom: 1.25rem;
+}
+
+.cr-card-header-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cr-card-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.cr-card-header-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 0.45rem;
+  border: 1px solid #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #2563eb;
+}
+
+.cr-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cr-field label {
+  font-size: 0.85rem;
+  color: #111827;
+}
+
+.cr-required {
+  color: #ef4444;
+}
+
+.cr-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.85rem;
+}
+
+.cr-input-icon {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.cr-input-wrapper input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.cr-input-wrapper input::placeholder {
+  color: #9ca3af;
+}
+
+.cr-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.cr-plan-card {
+  border-radius: 1.25rem;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 1.25rem 1.25rem 1.4rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease,
+    transform 0.12s ease;
+}
+
+.cr-plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+}
+
+.cr-plan-card-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 16px 40px rgba(37, 99, 235, 0.35);
+}
+
+.cr-plan-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.cr-plan-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.cr-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.cr-plan-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.cr-plan-check {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.cr-feedback {
+  text-align: center;
+}
+
+.cr-submit-bar {
+  margin-top: 0.5rem;
+  background: #020617;
+}
+
+.cr-submit-button {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: #2563eb;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.cr-submit-button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.cr-link-button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+
