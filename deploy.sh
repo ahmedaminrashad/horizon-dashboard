@@ -16,7 +16,7 @@ DOMAIN="dashboard.indicator-app.com"
 BUILD_DIR="dist"
 REMOTE_USER="${REMOTE_USER:-your-username}"
 REMOTE_HOST="${REMOTE_HOST:-your-server.com}"
-REMOTE_PATH="${REMOTE_PATH:-/var/www/dashboard}"
+REMOTE_PATH="${REMOTE_PATH:-/var/www/horizon-dashboard}"
 
 echo -e "${GREEN}🚀 Starting deployment to ${DOMAIN}${NC}\n"
 
