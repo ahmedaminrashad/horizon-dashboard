@@ -21,7 +21,7 @@ DOMAIN="operate.indicator-app.com"
 BUILD_DIR="dist"  # Local build directory (created by npm run build)
 NGINX_SITES_AVAILABLE="/etc/nginx/sites-available"
 NGINX_SITES_ENABLED="/etc/nginx/sites-enabled"
-APP_ROOT="/var/www/horizon-operate"  # Remote deployment directory (where build files are deployed)
+APP_ROOT="/var/www/horizon-dashboard"  # Remote deployment directory (where build files are deployed)
 CONFIG_FILE="${NGINX_SITES_AVAILABLE}/${DOMAIN}"
 
 echo -e "${GREEN}🔧 Setting up Nginx configuration for ${DOMAIN}${NC}\n"
