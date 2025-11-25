@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Nginx configuration script for Horizon Dashboard
-# Domain: dashboard.indicator-app.com
+# Nginx configuration script for Horizon Dashboard - Operate
+# Domain: operate.indicator-app.com
 #
 # This script configures nginx to serve the application from the deployment directory.
 # The build directory (dist/) contains the production files that should be deployed
@@ -17,11 +17,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-DOMAIN="dashboard.indicator-app.com"
+DOMAIN="operate.indicator-app.com"
 BUILD_DIR="dist"  # Local build directory (created by npm run build)
 NGINX_SITES_AVAILABLE="/etc/nginx/sites-available"
 NGINX_SITES_ENABLED="/etc/nginx/sites-enabled"
-APP_ROOT="/var/www/horizon-dashboard"  # Remote deployment directory (where build files are deployed)
+APP_ROOT="/var/www/horizon-operate"  # Remote deployment directory (where build files are deployed)
 CONFIG_FILE="${NGINX_SITES_AVAILABLE}/${DOMAIN}"
 
 echo -e "${GREEN}🔧 Setting up Nginx configuration for ${DOMAIN}${NC}\n"
@@ -53,7 +53,7 @@ echo -e "${YELLOW}📝 Creating Nginx configuration...${NC}"
 
 cat > $CONFIG_FILE <<EOF
 # Nginx configuration for ${DOMAIN}
-# Horizon Dashboard
+# Horizon Dashboard - Operate
 
 # HTTP Server - Redirect to HTTPS
 server {
@@ -201,7 +201,7 @@ else
         echo -e "${YELLOW}This will cause 404 errors. Please deploy your build files first.${NC}"
         echo -e "${YELLOW}Expected location: ${APP_ROOT}/index.html${NC}"
         echo -e "${YELLOW}Build directory (local): ${BUILD_DIR}/${NC}"
-        echo -e "${YELLOW}Run deploy.sh to deploy files, or manually copy ${BUILD_DIR}/* to ${APP_ROOT}/${NC}\n"
+        echo -e "${YELLOW}Run build-app.sh or deploy.sh to deploy files, or manually copy ${BUILD_DIR}/* to ${APP_ROOT}/${NC}\n"
         read -p "Continue anyway? (y/n): " continue_anyway
         if [ "$continue_anyway" != "y" ] && [ "$continue_anyway" != "Y" ]; then
             echo -e "${YELLOW}Exiting. Please deploy files first.${NC}"
@@ -283,7 +283,7 @@ EOF
         # Restore full config
         cat > $CONFIG_FILE <<EOF
 # Nginx configuration for ${DOMAIN}
-# Horizon Dashboard
+# Horizon Dashboard - Operate
 
 # HTTP Server - Redirect to HTTPS
 server {
@@ -462,7 +462,7 @@ echo -e "  Logs: ${GREEN}/var/log/nginx/${DOMAIN}-*.log${NC}\n"
 echo -e "${BLUE}📝 Next Steps:${NC}"
 echo -e "  1. On your local machine, build the app: ${GREEN}npm run build${NC}"
 echo -e "  2. Deploy contents of ${GREEN}${BUILD_DIR}/${NC} to: ${GREEN}${APP_ROOT}${NC}"
-echo -e "     (Use deploy.sh script or manually upload files)"
+echo -e "     (Use build-app.sh script or manually upload files)"
 echo -e "  3. Ensure files are owned by www-data: ${GREEN}chown -R www-data:www-data ${APP_ROOT}${NC}"
 echo -e "  4. Test your site: ${GREEN}https://${DOMAIN}${NC}\n"
 
