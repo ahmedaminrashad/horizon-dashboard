@@ -64,7 +64,7 @@ case $choice in
         if [ -z "$REMOTE_HOST" ] || [ "$REMOTE_HOST" == "your-server.com" ]; then
             read -p "Enter remote host: " REMOTE_HOST
         fi
-        if [ -z "$REMOTE_PATH" ] || [ "$REMOTE_PATH" == "/var/www/dashboard.indicator-app.com" ]; then
+        if [ -z "$REMOTE_PATH" ] || [ "$REMOTE_PATH" == "horizon-dashboard" ]; then
             read -p "Enter remote path [${REMOTE_PATH}]: " input_path
             REMOTE_PATH=${input_path:-$REMOTE_PATH}
         fi
@@ -80,7 +80,7 @@ case $choice in
         if [ -z "$REMOTE_HOST" ] || [ "$REMOTE_HOST" == "your-server.com" ]; then
             read -p "Enter remote host: " REMOTE_HOST
         fi
-        if [ -z "$REMOTE_PATH" ] || [ "$REMOTE_PATH" == "/var/www/dashboard.indicator-app.com" ]; then
+        if [ -z "$REMOTE_PATH" ] || [ "$REMOTE_PATH" == "/var/www/horizon-dashboard" ]; then
             read -p "Enter remote path [${REMOTE_PATH}]: " input_path
             REMOTE_PATH=${input_path:-$REMOTE_PATH}
         fi
