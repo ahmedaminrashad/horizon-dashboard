@@ -2,6 +2,10 @@
 
 # Nginx configuration script for Horizon Dashboard
 # Domain: dashboard.indicator-app.com
+#
+# This script configures nginx to serve the application from the deployment directory.
+# The build directory (dist/) contains the production files that should be deployed
+# to the APP_ROOT directory on the server.
 
 set -e  # Exit on error
 
@@ -14,9 +18,10 @@ NC='\033[0m' # No Color
 
 # Configuration
 DOMAIN="dashboard.indicator-app.com"
+BUILD_DIR="dist"  # Local build directory (created by npm run build)
 NGINX_SITES_AVAILABLE="/etc/nginx/sites-available"
 NGINX_SITES_ENABLED="/etc/nginx/sites-enabled"
-APP_ROOT="/var/www/horizon-dashboard"
+APP_ROOT="/var/www/horizon-dashboard"  # Remote deployment directory (where build files are deployed)
 CONFIG_FILE="${NGINX_SITES_AVAILABLE}/${DOMAIN}"
 
 echo -e "${GREEN}🔧 Setting up Nginx configuration for ${DOMAIN}${NC}\n"
@@ -156,6 +161,54 @@ if [ ! -L "${NGINX_SITES_ENABLED}/${DOMAIN}" ]; then
     echo -e "${YELLOW}🔗 Enabling site...${NC}"
     ln -s $CONFIG_FILE ${NGINX_SITES_ENABLED}/${DOMAIN}
     echo -e "${GREEN}✓ Site enabled${NC}\n"
+fi
+
+# Verify deployment directory and files
+echo -e "${YELLOW}🔍 Verifying deployment directory...${NC}"
+if [ ! -d "$APP_ROOT" ]; then
+    echo -e "${YELLOW}⚠️  Directory ${APP_ROOT} does not exist. Creating it...${NC}"
+    mkdir -p $APP_ROOT
+    chown -R www-data:www-data $APP_ROOT
+    echo -e "${GREEN}✓ Directory created${NC}\n"
+else
+    echo -e "${GREEN}✓ Directory exists: ${APP_ROOT}${NC}"
+fi
+
+# Check if index.html exists
+if [ -f "${APP_ROOT}/index.html" ]; then
+    echo -e "${GREEN}✓ index.html found in ${APP_ROOT}${NC}\n"
+else
+    # Check if files are in a subdirectory (common mistake)
+    if [ -f "${APP_ROOT}/${BUILD_DIR}/index.html" ]; then
+        echo -e "${YELLOW}⚠️  Found index.html in ${APP_ROOT}/${BUILD_DIR}/ instead of ${APP_ROOT}/${NC}"
+        echo -e "${YELLOW}This means files were deployed to a subdirectory.${NC}"
+        echo -e "${YELLOW}Options:${NC}"
+        echo -e "  1. Move files: ${GREEN}mv ${APP_ROOT}/${BUILD_DIR}/* ${APP_ROOT}/ && rmdir ${APP_ROOT}/${BUILD_DIR}${NC}"
+        echo -e "  2. Update nginx root to: ${GREEN}${APP_ROOT}/${BUILD_DIR}${NC}"
+        read -p "Update nginx root to ${APP_ROOT}/${BUILD_DIR}? (y/n): " update_root
+        if [ "$update_root" = "y" ] || [ "$update_root" = "Y" ]; then
+            NEW_ROOT="${APP_ROOT}/${BUILD_DIR}"
+            echo -e "${GREEN}✓ Updating APP_ROOT to ${NEW_ROOT}${NC}"
+            # Update the config file - replace all occurrences of the root directive
+            sed -i "s|root ${APP_ROOT};|root ${NEW_ROOT};|g" $CONFIG_FILE
+            APP_ROOT="${NEW_ROOT}"
+            echo -e "${GREEN}✓ Updated nginx configuration${NC}\n"
+        else
+            echo -e "${YELLOW}Please move files manually or update the config.${NC}\n"
+        fi
+    else
+        echo -e "${RED}⚠️  WARNING: index.html NOT found in ${APP_ROOT}${NC}"
+        echo -e "${YELLOW}This will cause 404 errors. Please deploy your build files first.${NC}"
+        echo -e "${YELLOW}Expected location: ${APP_ROOT}/index.html${NC}"
+        echo -e "${YELLOW}Build directory (local): ${BUILD_DIR}/${NC}"
+        echo -e "${YELLOW}Run deploy.sh to deploy files, or manually copy ${BUILD_DIR}/* to ${APP_ROOT}/${NC}\n"
+        read -p "Continue anyway? (y/n): " continue_anyway
+        if [ "$continue_anyway" != "y" ] && [ "$continue_anyway" != "Y" ]; then
+            echo -e "${YELLOW}Exiting. Please deploy files first.${NC}"
+            exit 1
+        fi
+        echo ""
+    fi
 fi
 
 # Test nginx configuration
@@ -402,17 +455,31 @@ echo -e "${GREEN}✅ Nginx configuration completed!${NC}\n"
 echo -e "${BLUE}📋 Summary:${NC}"
 echo -e "  Domain: ${GREEN}${DOMAIN}${NC}"
 echo -e "  Config: ${GREEN}${CONFIG_FILE}${NC}"
-echo -e "  App Root: ${GREEN}${APP_ROOT}${NC}"
+echo -e "  Build Directory (local): ${GREEN}${BUILD_DIR}/${NC}"
+echo -e "  Deployment Directory (server): ${GREEN}${APP_ROOT}${NC}"
 echo -e "  Logs: ${GREEN}/var/log/nginx/${DOMAIN}-*.log${NC}\n"
 
 echo -e "${BLUE}📝 Next Steps:${NC}"
-echo -e "  1. Deploy your application files to: ${GREEN}${APP_ROOT}${NC}"
-echo -e "  2. Ensure files are owned by www-data: ${GREEN}chown -R www-data:www-data ${APP_ROOT}${NC}"
-echo -e "  3. Test your site: ${GREEN}https://${DOMAIN}${NC}\n"
+echo -e "  1. On your local machine, build the app: ${GREEN}npm run build${NC}"
+echo -e "  2. Deploy contents of ${GREEN}${BUILD_DIR}/${NC} to: ${GREEN}${APP_ROOT}${NC}"
+echo -e "     (Use deploy.sh script or manually upload files)"
+echo -e "  3. Ensure files are owned by www-data: ${GREEN}chown -R www-data:www-data ${APP_ROOT}${NC}"
+echo -e "  4. Test your site: ${GREEN}https://${DOMAIN}${NC}\n"
 
 echo -e "${BLUE}🔧 Useful Commands:${NC}"
 echo -e "  View logs: ${GREEN}tail -f /var/log/nginx/${DOMAIN}-error.log${NC}"
 echo -e "  Test config: ${GREEN}nginx -t${NC}"
 echo -e "  Reload nginx: ${GREEN}systemctl reload nginx${NC}"
 echo -e "  Restart nginx: ${GREEN}systemctl restart nginx${NC}\n"
+
+echo -e "${BLUE}🐛 Troubleshooting 404 Errors:${NC}"
+echo -e "  If you see '404 Not Found', check:${NC}"
+echo -e "  1. Files exist: ${GREEN}ls -la ${APP_ROOT}${NC}"
+echo -e "  2. index.html exists: ${GREEN}ls -la ${APP_ROOT}/index.html${NC}"
+echo -e "  3. File permissions: ${GREEN}ls -la ${APP_ROOT} | head${NC}"
+echo -e "  4. Nginx can read files: ${GREEN}sudo -u www-data ls ${APP_ROOT}${NC}"
+echo -e "  5. Check nginx error log: ${GREEN}tail -20 /var/log/nginx/${DOMAIN}-error.log${NC}"
+echo -e "  6. Verify root path in config: ${GREEN}grep 'root' ${CONFIG_FILE}${NC}"
+echo -e "  7. If files are in subdirectory, update root in: ${GREEN}${CONFIG_FILE}${NC}"
+echo -e "     Example: If files are in ${APP_ROOT}/dist, change 'root ${APP_ROOT};' to 'root ${APP_ROOT}/dist;'${NC}\n"
 
