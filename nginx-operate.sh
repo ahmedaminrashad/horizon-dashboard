@@ -48,6 +48,14 @@ if [ ! -d "$APP_ROOT" ]; then
     echo -e "${GREEN}✓ Directory created${NC}\n"
 fi
 
+# Create dist subdirectory if it doesn't exist
+if [ ! -d "${APP_ROOT}/dist" ]; then
+    echo -e "${YELLOW}📁 Creating dist directory: ${APP_ROOT}/dist${NC}"
+    mkdir -p ${APP_ROOT}/dist
+    chown -R www-data:www-data ${APP_ROOT}/dist
+    echo -e "${GREEN}✓ Dist directory created${NC}\n"
+fi
+
 # Create nginx configuration file
 echo -e "${YELLOW}📝 Creating Nginx configuration...${NC}"
 
@@ -98,7 +106,7 @@ server {
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
 
     # Root directory
-    root ${APP_ROOT};
+    root ${APP_ROOT}/dist;
     index index.html index.htm;
 
     # Logging
@@ -174,9 +182,21 @@ else
     echo -e "${GREEN}✓ Directory exists: ${APP_ROOT}${NC}"
 fi
 
+if [ ! -d "${APP_ROOT}/dist" ]; then
+    echo -e "${YELLOW}⚠️  Directory ${APP_ROOT}/dist does not exist. Creating it...${NC}"
+    mkdir -p ${APP_ROOT}/dist
+    chown -R www-data:www-data ${APP_ROOT}/dist
+    echo -e "${GREEN}✓ Dist directory created${NC}\n"
+else
+    echo -e "${GREEN}✓ Dist directory exists: ${APP_ROOT}/dist${NC}"
+fi
+
 # Check if index.html exists
-if [ -f "${APP_ROOT}/index.html" ]; then
-    echo -e "${GREEN}✓ index.html found in ${APP_ROOT}${NC}\n"
+if [ -f "${APP_ROOT}/dist/index.html" ]; then
+    echo -e "${GREEN}✓ index.html found in ${APP_ROOT}/dist${NC}\n"
+elif [ -f "${APP_ROOT}/index.html" ]; then
+    echo -e "${YELLOW}⚠️  Found index.html in ${APP_ROOT} instead of ${APP_ROOT}/dist${NC}"
+    echo -e "${YELLOW}Files should be in ${APP_ROOT}/dist/ for nginx to serve them${NC}\n"
 else
     # Check if files are in a subdirectory (common mistake)
     if [ -f "${APP_ROOT}/${BUILD_DIR}/index.html" ]; then
@@ -197,11 +217,11 @@ else
             echo -e "${YELLOW}Please move files manually or update the config.${NC}\n"
         fi
     else
-        echo -e "${RED}⚠️  WARNING: index.html NOT found in ${APP_ROOT}${NC}"
+        echo -e "${RED}⚠️  WARNING: index.html NOT found in ${APP_ROOT}/dist${NC}"
         echo -e "${YELLOW}This will cause 404 errors. Please deploy your build files first.${NC}"
-        echo -e "${YELLOW}Expected location: ${APP_ROOT}/index.html${NC}"
+        echo -e "${YELLOW}Expected location: ${APP_ROOT}/dist/index.html${NC}"
         echo -e "${YELLOW}Build directory (local): ${BUILD_DIR}/${NC}"
-        echo -e "${YELLOW}Run build-app.sh or deploy.sh to deploy files, or manually copy ${BUILD_DIR}/* to ${APP_ROOT}/${NC}\n"
+        echo -e "${YELLOW}Run build-app.sh or deploy.sh to deploy files, or manually copy ${BUILD_DIR}/* to ${APP_ROOT}/dist/${NC}\n"
         read -p "Continue anyway? (y/n): " continue_anyway
         if [ "$continue_anyway" != "y" ] && [ "$continue_anyway" != "Y" ]; then
             echo -e "${YELLOW}Exiting. Please deploy files first.${NC}"
@@ -254,7 +274,7 @@ server {
     listen [::]:80;
     server_name ${DOMAIN} www.${DOMAIN};
     
-    root ${APP_ROOT};
+    root ${APP_ROOT}/dist;
     index index.html;
     
     location / {
@@ -328,7 +348,7 @@ server {
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
 
     # Root directory
-    root ${APP_ROOT};
+    root ${APP_ROOT}/dist;
     index index.html index.htm;
 
     # Logging
@@ -407,7 +427,7 @@ server {
     listen [::]:80;
     server_name ${DOMAIN} www.${DOMAIN};
     
-    root ${APP_ROOT};
+    root ${APP_ROOT}/dist;
     index index.html index.htm;
     
     access_log /var/log/nginx/${DOMAIN}-access.log;
@@ -456,14 +476,15 @@ echo -e "${BLUE}📋 Summary:${NC}"
 echo -e "  Domain: ${GREEN}${DOMAIN}${NC}"
 echo -e "  Config: ${GREEN}${CONFIG_FILE}${NC}"
 echo -e "  Build Directory (local): ${GREEN}${BUILD_DIR}/${NC}"
-echo -e "  Deployment Directory (server): ${GREEN}${APP_ROOT}${NC}"
+echo -e "  Deployment Directory (server): ${GREEN}${APP_ROOT}/dist${NC}"
+echo -e "  Nginx Root: ${GREEN}${APP_ROOT}/dist${NC}"
 echo -e "  Logs: ${GREEN}/var/log/nginx/${DOMAIN}-*.log${NC}\n"
 
 echo -e "${BLUE}📝 Next Steps:${NC}"
 echo -e "  1. On your local machine, build the app: ${GREEN}npm run build${NC}"
-echo -e "  2. Deploy contents of ${GREEN}${BUILD_DIR}/${NC} to: ${GREEN}${APP_ROOT}${NC}"
+echo -e "  2. Deploy contents of ${GREEN}${BUILD_DIR}/${NC} to: ${GREEN}${APP_ROOT}/dist${NC}"
 echo -e "     (Use build-app.sh script or manually upload files)"
-echo -e "  3. Ensure files are owned by www-data: ${GREEN}chown -R www-data:www-data ${APP_ROOT}${NC}"
+echo -e "  3. Ensure files are owned by www-data: ${GREEN}chown -R www-data:www-data ${APP_ROOT}/dist${NC}"
 echo -e "  4. Test your site: ${GREEN}https://${DOMAIN}${NC}\n"
 
 echo -e "${BLUE}🔧 Useful Commands:${NC}"
@@ -474,12 +495,11 @@ echo -e "  Restart nginx: ${GREEN}systemctl restart nginx${NC}\n"
 
 echo -e "${BLUE}🐛 Troubleshooting 404 Errors:${NC}"
 echo -e "  If you see '404 Not Found', check:${NC}"
-echo -e "  1. Files exist: ${GREEN}ls -la ${APP_ROOT}${NC}"
-echo -e "  2. index.html exists: ${GREEN}ls -la ${APP_ROOT}/index.html${NC}"
-echo -e "  3. File permissions: ${GREEN}ls -la ${APP_ROOT} | head${NC}"
-echo -e "  4. Nginx can read files: ${GREEN}sudo -u www-data ls ${APP_ROOT}${NC}"
+echo -e "  1. Files exist: ${GREEN}ls -la ${APP_ROOT}/dist${NC}"
+echo -e "  2. index.html exists: ${GREEN}ls -la ${APP_ROOT}/dist/index.html${NC}"
+echo -e "  3. File permissions: ${GREEN}ls -la ${APP_ROOT}/dist | head${NC}"
+echo -e "  4. Nginx can read files: ${GREEN}sudo -u www-data ls ${APP_ROOT}/dist${NC}"
 echo -e "  5. Check nginx error log: ${GREEN}tail -20 /var/log/nginx/${DOMAIN}-error.log${NC}"
 echo -e "  6. Verify root path in config: ${GREEN}grep 'root' ${CONFIG_FILE}${NC}"
-echo -e "  7. If files are in subdirectory, update root in: ${GREEN}${CONFIG_FILE}${NC}"
-echo -e "     Example: If files are in ${APP_ROOT}/dist, change 'root ${APP_ROOT};' to 'root ${APP_ROOT}/dist;'${NC}\n"
+echo -e "  7. Root should be: ${GREEN}${APP_ROOT}/dist${NC}\n"
 
