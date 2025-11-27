@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 BUILD_DIR="dist"
-DEFAULT_API_URL="https://api.indicator-app.com/api"
+DEFAULT_API_URL="https://backend.indicator-app.com/api"
 
 echo -e "${GREEN}🚀 Starting deployment process${NC}\n"
 
