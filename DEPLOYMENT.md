@@ -149,16 +149,35 @@ bash deploy.sh
 
 ## Environment Variables
 
-Before building, make sure to set your API URL in `.env` or `.env.production`:
+**⚠️ IMPORTANT: Set your production API URL before building!**
 
-```env
-VITE_API_BASE_URL=https://api.indicator-app.com/api
-```
+The application uses environment variables to configure the API endpoint. Without proper configuration, production builds will try to connect to `localhost`, which will fail.
 
-Or for local development:
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
+### Setup Environment Files
+
+1. **For Development** (local development):
+   Create `.env` file in the project root:
+   ```env
+   VITE_API_BASE_URL=http://localhost:3000/api
+   ```
+
+2. **For Production** (before building):
+   Create `.env.production` file in the project root:
+   ```env
+   VITE_API_BASE_URL=https://api.indicator-app.com/api
+   ```
+   
+   Or if your API is on the same domain:
+   ```env
+   VITE_API_BASE_URL=/api
+   ```
+
+### Important Notes
+
+- **Never commit `.env` or `.env.production` files** to version control (they're in `.gitignore`)
+- The `deploy.sh` script will warn you if `.env.production` is missing or contains `localhost`
+- If `VITE_API_BASE_URL` is not set in production, the app will default to `/api` (relative path)
+- Always verify your API URL before deploying to production
 
 ## Directory Summary
 

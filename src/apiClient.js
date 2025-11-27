@@ -1,7 +1,36 @@
 import axios from 'axios'
 
+// Get API base URL from environment variable
+// In production, this should be set via .env.production file
+// In development, this should be set via .env file
+// Fallback: use localhost for development, but warn in production
+const getApiBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL
+  
+  if (envUrl) {
+    return envUrl
+  }
+  
+  // If no env variable is set, check if we're in production mode
+  const isProduction = import.meta.env.PROD
+  
+  if (isProduction) {
+    // In production, default to same-origin API (relative path)
+    // This assumes API is on the same domain
+    console.warn(
+      '⚠️ VITE_API_BASE_URL not set in production! ' +
+      'Using relative path /api. ' +
+      'Set VITE_API_BASE_URL in .env.production before building.'
+    )
+    return '/api'
+  }
+  
+  // Development fallback
+  return 'http://localhost:3000/api'
+}
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL: getApiBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
