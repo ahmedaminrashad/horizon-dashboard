@@ -14,6 +14,7 @@ NC='\033[0m' # No Color
 # Configuration
 BUILD_DIR="dist"
 DEFAULT_API_URL="https://backend.indicator-app.com/api"
+APP_NAME="horizon-dashboard"
 
 echo -e "${GREEN}🚀 Starting deployment process${NC}\n"
 
@@ -21,6 +22,7 @@ echo -e "${GREEN}🚀 Starting deployment process${NC}\n"
 echo -e "${YELLOW}📝 Setting default .env.production...${NC}"
 cat > .env.production <<EOF
 VITE_API_BASE_URL=${DEFAULT_API_URL}
+VITE_APP_NAME=${APP_NAME}
 EOF
 echo -e "${GREEN}✓ .env.production configured with: ${DEFAULT_API_URL}${NC}\n"
 
