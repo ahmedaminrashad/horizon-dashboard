@@ -1,11 +1,14 @@
 // Centralized route configuration
 import DashboardHome from '../dashboard/Home'
 import UserManagement from '../dashboard/users'
+import ClinicManagement from '../dashboard/clinics'
+import PackageManagement from '../dashboard/packages'
 
 export const ROUTES = {
   OVERVIEW: 'overview',
   USER_MANAGEMENT: 'user-management',
   CLINIC_MANAGEMENT: 'clinic-management',
+  PACKAGES: 'packages',
   APPOINTMENTS: 'appointments',
   NOTIFICATIONS: 'notifications',
   ROLE_PERMISSIONS: 'role-permissions',
@@ -16,7 +19,8 @@ export const ROUTES = {
 export const routeComponents = {
   [ROUTES.OVERVIEW]: DashboardHome,
   [ROUTES.USER_MANAGEMENT]: UserManagement,
-  [ROUTES.CLINIC_MANAGEMENT]: DashboardHome, // Placeholder - replace with actual component
+  [ROUTES.CLINIC_MANAGEMENT]: ClinicManagement,
+  [ROUTES.PACKAGES]: PackageManagement,
   [ROUTES.APPOINTMENTS]: DashboardHome, // Placeholder - replace with actual component
   [ROUTES.NOTIFICATIONS]: DashboardHome, // Placeholder - replace with actual component
   [ROUTES.ROLE_PERMISSIONS]: DashboardHome, // Placeholder - replace with actual component

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getCurrentLanguage } from './utils/language'
 
 // Get API base URL from environment variable
 // In production, this should be set via .env.production file
@@ -50,7 +51,7 @@ function getAuthToken() {
   }
 }
 
-// Request interceptor: Automatically attach token to all requests
+// Request interceptor: Automatically attach token and language to all requests
 apiClient.interceptors.request.use(
   (config) => {
     // Always attach token from localStorage if present
@@ -63,6 +64,10 @@ apiClient.interceptors.request.use(
       // Remove Authorization header if no token exists
       delete config.headers.Authorization
     }
+    
+    // Always attach language header to all requests
+    const currentLang = getCurrentLanguage()
+    config.headers['lang'] = currentLang
     
     return config
   },

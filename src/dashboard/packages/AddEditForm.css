@@ -1,0 +1,61 @@
+/* Package Add/Edit Form Styles */
+
+.package-modal-content {
+  max-width: 600px;
+}
+
+.translations-section {
+  margin-top: 1.5rem;
+}
+
+.translations-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.translation-card {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.translation-language-label {
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.translation-form-field {
+  margin-bottom: 0.75rem;
+}
+
+.translation-textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  color: #111827;
+  font-family: inherit;
+  resize: vertical;
+
+  transition: all 0.2s ease;
+}
+
+.translation-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.package-form-error {
+  padding: 0.75rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+

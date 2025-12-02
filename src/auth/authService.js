@@ -26,6 +26,10 @@ export function hasPermissionTo(user, permission) {
   if (!user || !Array.isArray(user.permissions)) return false
   return user.permissions.includes(permission)
 }
+export async function test() {
+  const res = await apiClient.get(REQUESTS.TEST.TEST)
+  return res.data
+}
 
 export async function login(credentials) {
   const res = await apiClient.post(REQUESTS.AUTH.LOGIN, credentials)

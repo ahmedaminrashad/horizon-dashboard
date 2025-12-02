@@ -3,9 +3,10 @@ import './register.css'
 import apiClient from '../apiClient'
 import { REQUESTS } from '../enums/requestEnum'
 import { LOCALES, getTranslations } from '../i18n'
+import { getCurrentLanguage, setCurrentLanguage } from '../utils/language'
 
 function AuthRegister({ onShowLogin }) {
-  const [locale, setLocale] = useState(LOCALES.EN)
+  const [locale, setLocale] = useState(getCurrentLanguage())
   const [form, setForm] = useState({
     clinicName: '',
     email: '',
@@ -17,6 +18,11 @@ function AuthRegister({ onShowLogin }) {
   const [success, setSuccess] = useState('')
 
   const t = getTranslations(locale)
+
+  const handleLocaleChange = (newLocale) => {
+    setLocale(newLocale)
+    setCurrentLanguage(newLocale)
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -64,14 +70,14 @@ function AuthRegister({ onShowLogin }) {
           <button
             type="button"
             className={locale === LOCALES.EN ? 'cr-lang-btn active' : 'cr-lang-btn'}
-            onClick={() => setLocale(LOCALES.EN)}
+            onClick={() => handleLocaleChange(LOCALES.EN)}
           >
             EN
           </button>
           <button
             type="button"
             className={locale === LOCALES.AR ? 'cr-lang-btn active' : 'cr-lang-btn'}
-            onClick={() => setLocale(LOCALES.AR)}
+            onClick={() => handleLocaleChange(LOCALES.AR)}
           >
             AR
           </button>

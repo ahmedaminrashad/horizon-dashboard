@@ -1,20 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './register.css'
 import { LOCALES, getTranslations } from '../i18n'
-import { login, fetchMe } from './authService'
+import { login, fetchMe, test } from './authService'
+import { getCurrentLanguage, setCurrentLanguage } from '../utils/language'
 
 function AuthLogin({ onLoggedIn, onShowRegister }) {
-  const [locale, setLocale] = useState(LOCALES.EN)
+  const [locale, setLocale] = useState(getCurrentLanguage())
   const [form, setForm] = useState({ phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const t = getTranslations(locale)
 
+  const handleLocaleChange = (newLocale) => {
+    setLocale(newLocale)
+    setCurrentLanguage(newLocale)
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
+
+  useEffect(() => {
+   test()
+    }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -42,14 +52,14 @@ function AuthLogin({ onLoggedIn, onShowRegister }) {
           <button
             type="button"
             className={locale === LOCALES.EN ? 'cr-lang-btn active' : 'cr-lang-btn'}
-            onClick={() => setLocale(LOCALES.EN)}
+            onClick={() => handleLocaleChange(LOCALES.EN)}
           >
             EN
           </button>
           <button
             type="button"
             className={locale === LOCALES.AR ? 'cr-lang-btn active' : 'cr-lang-btn'}
-            onClick={() => setLocale(LOCALES.AR)}
+            onClick={() => handleLocaleChange(LOCALES.AR)}
           >
             AR
           </button>

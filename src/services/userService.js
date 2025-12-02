@@ -30,3 +30,24 @@ export async function getUserById(id) {
   return response.data
 }
 
+/**
+ * Create a new user
+ * @param {Object} userData - User data to create
+ * @returns {Promise} API response with created user data
+ */
+export async function createUser(userData) {
+  const response = await apiClient.post(REQUESTS.USERS.CREATE, userData)
+  return response.data
+}
+
+/**
+ * Update an existing user
+ * @param {string|number} id - User ID
+ * @param {Object} userData - User data to update
+ * @returns {Promise} API response with updated user data
+ */
+export async function updateUser(id, userData) {
+  const response = await apiClient.put(REQUESTS.USERS.UPDATE(id), userData)
+  return response.data
+}
+
