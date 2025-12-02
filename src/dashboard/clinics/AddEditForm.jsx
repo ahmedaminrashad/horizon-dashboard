@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { createUser, updateUser } from '../../services/userService'
 import { getPackages } from '../../services/packageService'
+import { getRoles } from '../../services/roleService'
 import { ROLES } from '../../enums/rolesEnum'
 import './AddEditForm.css'
 
@@ -11,15 +12,18 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
     phone: '',
     password: '',
     package_id: '',
+    role_id: '',
   })
   const [packages, setPackages] = useState([])
+  const [roles, setRoles] = useState([])
   const [loadingPackages, setLoadingPackages] = useState(false)
+  const [loadingRoles, setLoadingRoles] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const isEditMode = !!clinic
 
-  // Fetch packages when form opens
+  // Fetch packages and roles when form opens
   useEffect(() => {
     if (isOpen) {
       const fetchPackagesList = async () => {
@@ -33,7 +37,23 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
           setLoadingPackages(false)
         }
       }
+
+      const fetchRolesList = async () => {
+        try {
+          setLoadingRoles(true)
+          const response = await getRoles()
+          // Handle both array and object with data property
+          const rolesData = Array.isArray(response) ? response : (response.data || [])
+          setRoles(rolesData)
+        } catch (err) {
+          console.error('Error fetching roles:', err)
+        } finally {
+          setLoadingRoles(false)
+        }
+      }
+
       fetchPackagesList()
+      fetchRolesList()
     }
   }, [isOpen])
 
@@ -47,15 +67,17 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
           phone: clinic.phone || '',
           password: '', // Don't pre-fill password
           package_id: clinic.package_id || clinic.packageId || '',
+          role_id: clinic.role_id || clinic.roleId || clinic.role?.id || '',
         })
       } else {
-        // Reset form for adding new clinic
+        // Reset form for adding new clinic - default to clinic role (ID 2)
         setForm({
           name: '',
           email: '',
           phone: '',
           password: '',
           package_id: '',
+          role_id: '2', // Default to clinic role (ID 2)
         })
       }
       setError('')
@@ -87,15 +109,19 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
         payload.package_id = parseInt(form.package_id, 10)
       }
 
+      // Add role_id
+      if (form.role_id) {
+        payload.role_id = parseInt(form.role_id, 10)
+      }
+
       if (isEditMode) {
-        // Edit mode: don't send role_id, only send password if provided
+        // Edit mode: only send password if provided
         if (form.password) {
           payload.password = form.password
         }
         await updateUser(clinic.id, payload)
       } else {
-        // Add mode: include hidden role_id=2
-        payload.role_id = ROLES.CLINIC
+        // Add mode: include role_id and password
         if (form.password) {
           payload.password = form.password
         }
@@ -178,6 +204,33 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
               required
             />
           </div>
+
+          {!isEditMode && (
+            <div className="form-field">
+              <label htmlFor="role_id">
+                Role <span className="required">*</span>
+              </label>
+              <select
+                id="role_id"
+                name="role_id"
+                value={form.role_id}
+                onChange={handleChange}
+                disabled={loadingRoles || true}
+                className="form-select"
+                required
+              >
+                <option value="">Select a role</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.name || role.title || `Role ${role.id}`}
+                  </option>
+                ))}
+              </select>
+              {loadingRoles && (
+                <span className="form-loading-text">Loading roles...</span>
+              )}
+            </div>
+          )}
 
           <div className="form-field">
             <label htmlFor="package_id">

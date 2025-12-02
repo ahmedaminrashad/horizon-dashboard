@@ -34,6 +34,9 @@ export const REQUESTS = Object.freeze({
     UPDATE: (id) => `/packages/${id}`,
     DELETE: (id) => `/packages/${id}`,
   },
+  ROLES: {
+    LIST: '/roles',
+  },
   TEST: {
     TEST: '/',
   },
