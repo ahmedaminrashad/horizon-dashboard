@@ -2,7 +2,12 @@
 // instead of hard-coding role IDs in components.
 
 export const ROLES = Object.freeze({
-  ADMIN: 1,
-  CLINIC: 2,
+  ADMIN: 'admin',
+  CLINIC: 'clinic',
+  DOCTOR: 'doctor',
+  PATIENT: 'patient',
+  STAFF: 'staff',
+  OTHER: 'other',
+  SUPER_ADMIN: 'super_admin',
 })
 

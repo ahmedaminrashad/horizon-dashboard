@@ -28,7 +28,7 @@ function ClinicManagement() {
       setLoading(true)
       setError(null)
       const params = {
-        role_id: ROLES.CLINIC, // Filter by CLINIC role
+        role_slug: ROLES.CLINIC, // Filter by CLINIC role
         page,
         limit,
       }
