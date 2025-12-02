@@ -77,12 +77,21 @@ function AddEditForm({ clinic, isOpen, onClose, onSuccess }) {
           phone: '',
           password: '',
           package_id: '',
-          role_id: '2', // Default to clinic role (ID 2)
+          role_id: roles.find(role => role.slug === ROLES.CLINIC)?.id || '',
         })
       }
       setError('')
     }
   }, [isOpen, isEditMode, clinic])
+
+  useEffect(() => {
+    if(roles.length > 0) {
+      setForm((prev) => ({
+        ...prev,
+        role_id: roles.find(role => role.slug === ROLES.CLINIC)?.id || '',
+      }))
+    }
+  }, [roles])
 
   const handleChange = (e) => {
     const { name, value } = e.target
